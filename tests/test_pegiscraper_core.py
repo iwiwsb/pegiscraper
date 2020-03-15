@@ -50,15 +50,3 @@ class TestPegiscraper:
 
     def test_get_descriptors_list(self):
         assert set(pegiscraper.get_descriptors_list(self.games_list[0])) == {'Bad Language', 'Violence', 'Drugs'}
-
-    def test_get_games_list(self):
-        with open('./search_page_1.html', 'rb') as search_results_file:
-            search_data = search_results_file.read()
-
-        soup = BeautifulSoup(search_data)
-        print(pegiscraper.get_games_list(soup))
-
-    def test_parse_search_results_file(self):
-        search_results_file = './search_page_1.html'
-        result = pegiscraper.parse_search_results_file(search_results_file)
-        print(result)
