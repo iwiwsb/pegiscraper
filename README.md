@@ -1,16 +1,16 @@
 # PegiScraper
 
-Python script that download from [PEGI](https://pegi.info) search results pages and extracts videogame data to a csv file. 
+Python script that extracts videogames data from [PEGI](https://pegi.info) and store it to a csv file. 
 
 ### Algorithm
 1. Download first page from [PEGI Search](https://pegi.info/search-pegi)
 2. Parse it
-3. Store information about every videogame into a csv file. 
+3. Store extracted information about every videogame into a csv file. 
 4. Download next page
 5. Repeat 2-5 until last page
 
 ### Example result
-
+A csv file with following columns and entries:
 |game_title|release_date|platform|rating|descriptors|
 |----------|------------|--------|------|-----------|
 |...|...|...|...|...|
