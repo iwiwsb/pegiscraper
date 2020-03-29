@@ -27,7 +27,7 @@ Extracted data saved to a csv file.
 2. Extract information about videogames
 3. Append extracted information to a csv file. 
 4. Download next page
-5. Repeat 2-5 until last page
+5. GOTO 2
 
 ### Example result
 A csv file with following columns and entries:
