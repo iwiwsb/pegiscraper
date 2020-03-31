@@ -23,7 +23,7 @@ Python script that extracts videogames data from [PEGI](https://pegi.info) such 
 Extracted data saved to a csv file.
 
 ### Algorithm
-1. Download first page from [PEGI Search](https://pegi.info/search-pegi)
+1. Download first page from [PEGI Search](https://pegi.info/search-pegi?q=&op=Search&filter-age%5B%5D=&filter-descriptor%5B%5D=&filter-publisher=&filter-platform%5B%5D=&filter-release-year%5B%5D=&page=1)
 2. Extract information about videogames
 3. Append extracted information to a csv file. 
 4. Download next page
