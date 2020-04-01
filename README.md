@@ -1,6 +1,6 @@
-# PegiScraper
+# PEGI Scraper
 
-Python script that extracts videogames data from [PEGI](https://pegi.info) such as:
+PEGI Scraper is the python script that extracts videogames data from [PEGI](https://pegi.info) website, such as:
 - Game title
 - Release date
 - Platforms
@@ -20,7 +20,7 @@ Python script that extracts videogames data from [PEGI](https://pegi.info) such 
   - Sex
   - Violence
 
-Extracted data saved to a csv file.
+The extracted data is saved to a csv file.
 
 ### Algorithm
 1. Download first page from [PEGI Search](https://pegi.info/search-pegi?q=&op=Search&filter-age%5B%5D=&filter-descriptor%5B%5D=&filter-publisher=&filter-platform%5B%5D=&filter-release-year%5B%5D=&page=1)
