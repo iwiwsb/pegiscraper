@@ -1,6 +1,6 @@
 # PEGI Scraper
 
-PEGI Scraper is the python script that extracts videogames data from [PEGI](https://pegi.info) website, such as:
+PEGI Scraper is the python script that extracts information about videogames from [PEGI](https://pegi.info) website, such as:
 - Game title
 - Release date
 - Platforms
@@ -24,8 +24,8 @@ The extracted data is saved to a csv file.
 
 ### Algorithm
 1. Download first page from [PEGI Search](https://pegi.info/search-pegi?q=&op=Search&filter-age%5B%5D=&filter-descriptor%5B%5D=&filter-publisher=&filter-platform%5B%5D=&filter-release-year%5B%5D=&page=1)
-2. Extract information about videogames
-3. Append extracted information to a csv file. 
+2. Extract information from downloaded page
+3. Save extracted information to a csv file. 
 4. Download next page
 5. GOTO 2
 
@@ -41,5 +41,5 @@ A csv file with following columns and entries:
 |...|...|...|...|...|
 
 ### Speed
-Very slow, because it downloads and parses pages one at a time. So far it needs to download 31346 pages (by March 2020).
+Very slow, because it downloads and parses pages one at a time, and so far it needs to download 31432 pages (by April 2nd 2020).
 
