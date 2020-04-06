@@ -1,7 +1,45 @@
-# PegiScraper
+# PEGI Scraper
 
-Скрипт на Python, который записывает в csv-файл все продукты на сайте [PEGI](https://pegi.info). Скрипт скачивает 
-каждую страницу результатов поиска и парсит её. Затем скачивает следующуюю и так далее. Работает довольно медленно, 
-потому что нужно скачать более 3000 страниц. На каждую страницу выводится 10 результатов поиска, а всего результатов на момент декабря 2018 было 30136. На момент марта 2020 — 31346. Скачивание и парсинг всех страниц занимает около 3 часов.
+PEGI Scraper is the python script that extracts information about videogames from [PEGI](https://pegi.info) website, such as:
+- Game title
+- Release date
+- Platforms
+- Raiting
+  - 3+
+  - 7+
+  - 12+
+  - 16+
+  - 18+
+- Content descriptors
+  - Bad language
+  - Discrimination
+  - Drugs
+  - Fear
+  - Gambling
+  - In-Game Purchases
+  - Sex
+  - Violence
 
-Для парсинга HTML используется библиотека [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/)
+The extracted data is saved to a csv file.
+
+### Algorithm
+1. Download first page from [PEGI Search](https://pegi.info/search-pegi?q=&op=Search&filter-age%5B%5D=&filter-descriptor%5B%5D=&filter-publisher=&filter-platform%5B%5D=&filter-release-year%5B%5D=&page=1)
+2. Extract information from downloaded page
+3. Save extracted information to a csv file. 
+4. Download next page
+5. GOTO 2
+
+### Example result
+A csv file with following columns and entries:
+|game_title|release_date|platform|rating|descriptors|
+|----------|------------|--------|------|-----------|
+|...|...|...|...|...|
+|Just Cause 4|04/12/2018|PC \| Xbox&nbsp;One \| PlayStation&nbsp;4|18|Violence \| Bad&nbsp;Language|
+|Mutant Year Zero: Road to Eden|04/12/2018|PC \| PlayStation&nbsp;4 \| Xbox&nbsp;One|16|Violence \| Bad&nbsp;Language |
+|Atelier Meruru: The Apprentice of Arland DX|04/12/2018|PlayStation&nbsp;4 \| PC|12|Violence \| Bad&nbsp;Language \| Sex |
+|Hellblade: Senua's Sacrifice|04/12/2018|Xbox&nbsp;One \| PlayStation&nbsp;4|18|Violence \| Bad&nbsp;Language |
+|...|...|...|...|...|
+
+### Speed
+Very slow, because it downloads and parses pages one at a time, and so far it needs to download 31432 pages (by April 2nd 2020).
+
