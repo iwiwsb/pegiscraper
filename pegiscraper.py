@@ -19,7 +19,11 @@ def main():
         os.makedirs('./pages/')
 
     with open('./games.csv', 'w', encoding='utf8', newline='') as csvfile:
-        fieldnames = ['game_title', 'release_date', 'platform', 'rating', 'descriptors']
+        fieldnames = ["\"game_title\"", 
+                      "\"release_date\"", 
+                      "\"platform\"", 
+                      "\"rating\"", 
+                      "\"descriptors\""]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for page in pages_range:
@@ -127,11 +131,11 @@ def parse_search_results_file(filename):
         descriptors = '|'.join(get_descriptors_list(game))
 
         results.append({
-            'game_title': game_title,
-            'release_date': release_date,
-            'platform': platform,
-            'rating': rating,
-            'descriptors': descriptors
+            '\"game_title\"': game_title,
+            '\"release_date\"': release_date,
+            '\"platform\"': platform,
+            '\"rating\"': rating,
+            '\"descriptors\"': descriptors
         })
 
     return results
