@@ -35,28 +35,10 @@ def main():
                     print("File \"search_page_{0}.html\" successfully downloaded".format(page))
 
                 print("Writing content of ./search_page_{0}.html to ./games.csv".format(page))
-                writer.writerows(parse_search_results_file('./pages/search_page_%d.html' % page))
-                print("Done!")
             else:
                 print("File ./search_page_{0}.html already exists. Writing content to ./games.csv".format(page))
-                writer.writerows(parse_search_results_file('./pages/search_page_%d.html' % page))
-                print("Done!")
-
-
-pegi_ratings = {'pegi3': 3,
-                'pegi7': 7,
-                'pegi12': 12,
-                'pegi16': 16,
-                'pegi18': 18}
-
-pegi_descriptors = {'bad_language': 'Bad Language',
-                    'discrimination': 'Discrimination',
-                    'drugs': 'Drugs',
-                    'fear': 'Fear',
-                    'gambling': 'Gambling',
-                    'in-game_purchases': 'In-Game Purchases',
-                    'sex': 'Sex',
-                    'violence': 'Violence'}
+            writer.writerows(parse_search_results_file('./pages/search_page_%d.html' % page))
+            print("Done!")
 
 
 def read_file(filename):
@@ -72,7 +54,7 @@ def get_pages_count(text):
 
 
 def load_search_results(page, session):
-    url = '''https://pegi.info/search-pegi?q=&op=Search&filter-age%%5B0%%5D=&filter-descriptor%%5B0%%5D=&filter-publisher=&filter-platform%%5B0%%5D=&filter-release-year%%5B0%%5D=&page=%d&form_build_id=form-88GMUA5ozIEoixti0c5M0BNFoRGb_id2bVRIj6t3MTQ&form_id=pegi_search_form''' % page
+    url = '''https://pegi.info/search-pegi?q=&filter-age%%5B0%%5D=&filter-descriptor%%5B0%%5D=&filter-publisher=&filter-platform%%5B0%%5D=&filter-release-year%%5B0%%5D=&page=%d''' % page
     request = session.get(url)
     assert isinstance(request.text, str)
     return request.text
@@ -99,12 +81,26 @@ def get_platform(game):
 
 
 def get_rating(game):
+    pegi_ratings = {'pegi3': 3,
+                    'pegi7': 7,
+                    'pegi12': 12,
+                    'pegi16': 16,
+                    'pegi18': 18}
     filepath = game.find('div', {'class': 'age-rating'}).find('img').get('src')
     key = get_filename(filepath).rstrip('.png')
     return pegi_ratings[key]
 
 
 def get_descriptors_list(game):
+    pegi_descriptors = {'bad_language': 'Bad Language',
+                        'discrimination': 'Discrimination',
+                        'drugs': 'Drugs',
+                        'fear': 'Fear',
+                        'gambling': 'Gambling',
+                        'in-game_purchases': 'In-Game Purchases',
+                        'sex': 'Sex',
+                        'violence': 'Violence'}
+    
     descriptors_list = []
     descriptors = game.find('div', {'class': 'descriptors'}).find_all('img')
 
