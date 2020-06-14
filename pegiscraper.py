@@ -19,7 +19,7 @@ def main():
         fieldnames = ['"game_title"',
                       '"publisher"',
                       '"release_date"',
-                      '"platform"',
+                      '"platforms"',
                       '"rating"',
                       '"descriptors"',
                       '"website"']
@@ -33,14 +33,14 @@ def main():
                 game_title = get_title(game)
                 publisher = get_publisher(game)
                 release_date = get_release_date(game)
-                platform = get_platform(game)
+                platforms = get_platforms(game)
                 rating = get_rating(game)
                 descriptors = get_descriptors(game)
                 website = get_website(game)
                 values = [game_title,
                           publisher,
                           release_date,
-                          platform,
+                          platforms,
                           rating,
                           descriptors,
                           website]
@@ -79,7 +79,7 @@ def get_release_date(game):
     return game.find("span", {"class": "release-date"}).text.lstrip("\nRelease Date:")
 
 
-def get_platform(game):
+def get_platforms(game):
     return game.find("span", {"class": "platform"}).text.split(":")[1]
 
 
