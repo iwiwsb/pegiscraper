@@ -16,11 +16,13 @@ def main():
     pages_range = range(1, pages_count + 1)
 
     with open("./games.csv", "w", encoding="utf8", newline="", buffering=1) as csvfile:
-        fieldnames = ['\"game_title\"',
-                      '\"release_date\"',
-                      '\"platform\"',
-                      '\"rating\"',
-                      '\"descriptors\"']
+        fieldnames = ['"game_title"',
+                      '"publisher"',
+                      '"release_date"',
+                      '"platform"',
+                      '"rating"',
+                      '"descriptors"',
+                      '"website"']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=',')
         writer.writeheader()
         for page in pages_range:
@@ -29,12 +31,22 @@ def main():
             games_list = get_games_list(soup)
             for game in games_list:
                 game_title = get_title(game)
+                publisher = get_publisher(game)
                 release_date = get_release_date(game)
                 platform = get_platform(game)
                 rating = get_rating(game)
                 descriptors = get_descriptors(game)
-                entry = dict(zip(fieldnames, [game_title, release_date, platform, rating, descriptors]))
+                website = get_website(game)
+                values = [game_title,
+                          publisher,
+                          release_date,
+                          platform,
+                          rating,
+                          descriptors,
+                          website]
+                entry = dict(zip(fieldnames, values))
                 writer.writerow(entry)
+            print("Parsed {}/{} games".format(page, pages_count))
 
 
 def get_pages_count(text):
@@ -92,7 +104,7 @@ def get_descriptors(game):
                         "in-game_purchases": "In-Game Purchases",
                         "sex": "Sex",
                         "violence": "Violence"}
-    
+
     descriptors_list = []
     descriptors = game.find("div", {"class": "descriptors"}).find_all("img")
 
@@ -103,6 +115,18 @@ def get_descriptors(game):
         else:
             descriptors_list.append("")
     return ", ".join(descriptors_list)
+
+
+def get_publisher(game):
+    return game.find("span", {"class": "publisher"}).text
+
+
+def get_website(game):
+    url = ""
+    website = game.find("div", {"class": "info"}).find("span", {"class": "website-info"})
+    if website is not None:
+        url = website.find("a")["href"]
+    return url
 
 
 if __name__ == "__main__":
