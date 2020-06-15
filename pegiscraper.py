@@ -1,3 +1,4 @@
+import argparse
 import csv
 import os
 import requests
@@ -5,6 +6,18 @@ from bs4 import BeautifulSoup
 
 
 def main():
+    delimiters_names = ["comma", "tab", "colon", "semicolon", "pipe"]
+    parser = argparse.ArgumentParser(description="Scrape videogame data from PEGI website")
+    parser.add_argument("--delimiter",
+                        default="comma",
+                        type=str,
+                        choices=delimiters_names,
+                        required=False,
+                        help="Delimiter will be used in csv file. The default is comma.")
+    parser.add_argument("path", type=str, help="Path where to save file.")
+    delimiters = dict(zip(delimiters_names, [",", "\t", ":", ";", "|"]))
+
+    args = parser.parse_args()
     s = requests.Session()
     s.headers.update({
         "Referer": "https://pegi.info/",
@@ -15,7 +28,7 @@ def main():
     pages_count = get_pages_count(data)
     pages_range = range(1, pages_count + 1)
 
-    with open("./games.csv", "w", encoding="utf8", newline="", buffering=1) as csvfile:
+    with open(args.path, "w", encoding="utf8", newline="", buffering=1) as csvfile:
         fieldnames = ['"game_title"',
                       '"publisher"',
                       '"release_date"',
@@ -23,7 +36,7 @@ def main():
                       '"rating"',
                       '"descriptors"',
                       '"website"']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=',')
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=delimiters[args.delimiter])
         writer.writeheader()
         for page in pages_range:
             search_results: str = load_search_results(page=page, session=s)
@@ -46,7 +59,8 @@ def main():
                           website]
                 entry = dict(zip(fieldnames, values))
                 writer.writerow(entry)
-            print("Parsed {}/{} games".format(page, pages_count))
+            progress_percent = page / pages_count * 100
+            print("\rParsed {}/{} pages ({:.2}%)".format(page, pages_count, progress_percent), end="")
 
 
 def get_pages_count(text):
@@ -56,8 +70,8 @@ def get_pages_count(text):
 
 
 def load_search_results(page, session):
-    url = """https://pegi.info/search-pegi?q=&filter-age%%5B0%%5D=&filter-descriptor%%5B0%%5D=&filter-publisher
-             =&filter-platform%%5B0%%5D=&filter-release-year%%5B0%%5D=&page=""" + str(page)
+    url = ("https://pegi.info/search-pegi?q=&filter-age%%5B0%%5D=&filter-descriptor%%5B0%%5D=&filter-publisher="
+           "&filter-platform%%5B0%%5D=&filter-release-year%%5B0%%5D=&page={0}".format(page))
     request = session.get(url)
     assert isinstance(request.text, str)
     return request.text
