@@ -1,4 +1,4 @@
-import argparse
+from argparse import ArgumentParser
 import csv
 import os
 import requests
@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 def main():
     delimiters_names = ["comma", "tab", "colon", "semicolon", "pipe"]
-    parser = argparse.ArgumentParser(description="Scrape videogame data from PEGI website")
+    parser = ArgumentParser(description="Scrape videogame data from PEGI website")
     parser.add_argument("--delimiter",
                         default="comma",
                         type=str,
