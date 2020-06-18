@@ -90,7 +90,9 @@ def get_title(game):
 
 
 def get_release_date(game):
-    return game.find("span", {"class": "release-date"}).text.lstrip("\nRelease Date:")
+    date = game.find("span", {"class": "release-date"}).text.lstrip("\nRelease Date:")
+    day, month, year = date.split("/")
+    return str(year + '-' + month + '-' + day)
 
 
 def get_platforms(game):
