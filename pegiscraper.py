@@ -6,16 +6,19 @@ from bs4 import BeautifulSoup
 
 
 def main():
-    delimiters_names = ["comma", "tab", "colon", "semicolon", "pipe"]
+    delimiters = {'comma': ",",
+                  'tab': "\t",
+                  'colon': ":",
+                  'semicolon': ";",
+                  'pipe': "|"}
     parser = ArgumentParser(description="Scrape videogame data from PEGI website")
     parser.add_argument("--delimiter",
                         default="comma",
                         type=str,
-                        choices=delimiters_names,
+                        choices=delimiters.keys(),
                         required=False,
                         help="Delimiter will be used in csv file. The default is comma.")
     parser.add_argument("path", type=str, help="Path where to save file.")
-    delimiters = dict(zip(delimiters_names, [",", "\t", ":", ";", "|"]))
 
     args = parser.parse_args()
     s = requests.Session()
