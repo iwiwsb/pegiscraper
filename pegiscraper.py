@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+import math
 import csv
 import os
 import requests
@@ -71,8 +72,9 @@ def main():
 
 def get_pages_count(text):
     soup = BeautifulSoup(text, features="lxml")
-    count = int(soup.find("div", {"class": "results-count"}).find("strong").text.strip("results"))
-    return count // 10 + 1
+    results_count = int(soup.find("div", {"class": "results-count"}).find("strong").text.strip("results"))
+    pages_count = math.floor(results_count / 10)
+    return pages_count
 
 
 def get_filename(path):
