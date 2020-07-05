@@ -75,14 +75,6 @@ def get_pages_count(text):
     return count // 10 + 1
 
 
-def load_search_results(page, session):
-    url = ("https://pegi.info/search-pegi?q=&filter-age%%5B0%%5D=&filter-descriptor%%5B0%%5D=&filter-publisher="
-           "&filter-platform%%5B0%%5D=&filter-release-year%%5B0%%5D=&page={0}".format(page))
-    request = session.get(url)
-    assert isinstance(request.text, str)
-    return request.text
-
-
 def get_filename(path):
     return os.path.split(path)[1]
 
