@@ -31,8 +31,8 @@ def main():
     url = ("https://pegi.info/search-pegi?q=&filter-age%%5B0%%5D=&filter-descriptor%%5B0%%5D=&filter-publisher="
            "&filter-platform%%5B0%%5D=&filter-release-year%%5B0%%5D=&page={}")
 
-    data = s.get(url.format(1)).text
-    pages_count = get_pages_count(data)
+    first_page_html = s.get(url.format(1)).text
+    pages_count = get_pages_count(first_page_html)
     pages_range = range(1, pages_count + 1)
 
     with open(args.path, "w", encoding="utf8", newline="", buffering=1) as csvfile:
@@ -46,7 +46,10 @@ def main():
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=delimiters[args.delimiter])
         writer.writeheader()
         for page in pages_range:
-            search_results = s.get(url.format(page)).text
+            if page == 1:
+                search_results = first_page_html
+            else:
+                search_results = s.get(url.format(page)).text
             soup = BeautifulSoup(search_results, features="lxml")
             games_list = get_games_list(soup)
             for game in games_list:
