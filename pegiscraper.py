@@ -27,7 +27,10 @@ def main():
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0"
     })
 
-    data = load_search_results(page=1, session=s)
+    url = ("https://pegi.info/search-pegi?q=&filter-age%%5B0%%5D=&filter-descriptor%%5B0%%5D=&filter-publisher="
+           "&filter-platform%%5B0%%5D=&filter-release-year%%5B0%%5D=&page={}")
+
+    data = s.get(url.format(1)).text
     pages_count = get_pages_count(data)
     pages_range = range(1, pages_count + 1)
 
@@ -42,7 +45,7 @@ def main():
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=delimiters[args.delimiter])
         writer.writeheader()
         for page in pages_range:
-            search_results: str = load_search_results(page=page, session=s)
+            search_results = s.get(url.format(page)).text
             soup = BeautifulSoup(search_results, features="lxml")
             games_list = get_games_list(soup)
             for game in games_list:
