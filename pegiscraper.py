@@ -32,7 +32,8 @@ def main():
            "&filter-platform%%5B0%%5D=&filter-release-year%%5B0%%5D=&page={}")
 
     first_page_html = s.get(url.format(1)).text
-    pages_count = get_pages_count(first_page_html)
+    first_page_soup = BeautifulSoup(first_page_html, features="lxml")
+    pages_count = get_pages_count(first_page_soup)
     pages_range = range(1, pages_count + 1)
 
     with open(args.path, "w", encoding="utf8", newline="", buffering=1) as csvfile:
@@ -47,10 +48,10 @@ def main():
         writer.writeheader()
         for page in pages_range:
             if page == 1:
-                search_results = first_page_html
+                soup = first_page_soup
             else:
                 search_results = s.get(url.format(page)).text
-            soup = BeautifulSoup(search_results, features="lxml")
+                soup = BeautifulSoup(search_results, features="lxml")
             games_list = get_games_list(soup)
             for game in games_list:
                 game_title = get_title(game)
@@ -73,8 +74,7 @@ def main():
             print("\rParsed {}/{} pages ({:.2}%)".format(page, pages_count, progress_percent), end="")
 
 
-def get_pages_count(text):
-    soup = BeautifulSoup(text, features="lxml")
+def get_pages_count(soup):
     results_count = int(soup.find("div", {"class": "results-count"}).find("strong").text.strip("results"))
     pages_count = math.floor(results_count / 10)
     return pages_count
