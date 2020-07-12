@@ -1,27 +1,41 @@
 # PEGI Scraper
 
 PEGI Scraper is the python script that extracts information about videogames from [PEGI](https://pegi.info) website, such as:
-- Game title
-- Publisher
-- Release date
-- Platforms
-- Raiting
-  - 3+
-  - 7+
-  - 12+
-  - 16+
-  - 18+
-- Content descriptors
-  - Bad language
-  - Discrimination
-  - Drugs
-  - Fear
-  - Horror
-  - Gambling
-  - In-Game Purchases
-  - Sex
-  - Violence
-- Website
+<ul>
+  <li>Game title</li>
+  <li>Publisher</li>
+  <li>Release date</li>
+  <li>Platforms</li>
+  <li>
+    <details>
+      <summary>Rating</summary>
+      <ul>
+        <li>3+</li>
+        <li>7+</li>
+        <li>12+</li>
+        <li>16+</li>
+        <li>18+</li>
+      </ul>
+    </details>
+  </li>
+  <li>
+    <details>
+      <summary>Content descriptors</summary>
+      <ul>
+        <li>Bad language</li>
+        <li>Discrimination</li>
+        <li>Drugs</li>
+        <li>Fear</li>
+        <li>Horror</li>
+        <li>Gambling</li>
+        <li>In-Game Purchases</li>
+        <li>Sex</li>
+        <li>Violence</li>
+      </ul>
+    </details>
+  </li>
+  <li>Website</li>
+</ul>
 
 The extracted data is saved to a csv file.
 
