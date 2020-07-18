@@ -13,7 +13,7 @@ without even the implied warranty of MERCHANTABILITY or
 FITNESS FOR A PARTICULAR PURPOSE.
 
 This program is best shunned and left unused (but it is free software,
-and you are welcome to redistribute it under certain conditions).
+and you are welcome to redistribute it under certain conditions).<br />
 :radioactive: :scream: <b>DO NOT USE THIS PROGRAM.</b> :scream: :radioactive:
 
 This program is licensed under the Sandia Message Public License,
