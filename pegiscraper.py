@@ -31,7 +31,7 @@ def main():
     url = ("https://pegi.info/search-pegi?q=&filter-age%%5B0%%5D=&filter-descriptor%%5B0%%5D=&filter-publisher="
            "&filter-platform%%5B0%%5D=&filter-release-year%%5B0%%5D=&page={}")
 
-    first_page_html = s.get(url.format(1)).text
+    first_page_html = get_page_html(s, url, 1)
     first_page_soup = BeautifulSoup(first_page_html, features="lxml")
     pages_count = get_pages_count(first_page_soup)
     pages_range = range(1, pages_count + 1)
@@ -50,7 +50,7 @@ def main():
             if page == 1:
                 soup = first_page_soup
             else:
-                search_results = s.get(url.format(page)).text
+                search_results = get_page_html(s, url, page)
                 soup = BeautifulSoup(search_results, features="lxml")
             games_list = get_games_list(soup)
             for game in games_list:
@@ -72,6 +72,10 @@ def main():
                 writer.writerow(entry)
             progress_percent = page / pages_count * 100
             print("\rParsed {}/{} pages ({:.2}%)".format(page, pages_count, progress_percent), end="")
+
+
+def get_page_html(session, url, page_number):
+    return session.get(url.format(page_number)).text
 
 
 def get_pages_count(soup):
