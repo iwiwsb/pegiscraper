@@ -1,18 +1,20 @@
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 import math
 import csv
 import os
+from typing import Dict
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
+from requests.sessions import Session
 
 
 def main():
-    delimiters = {'comma': ",",
-                  'tab': "\t",
-                  'colon': ":",
-                  'semicolon': ";",
-                  'pipe': "|"}
-    parser = ArgumentParser(description="Scrape videogame data from PEGI website")
+    delimiters: Dict[str, str] = {'comma': ",",
+                                  'tab': "\t",
+                                  'colon': ":",
+                                  'semicolon': ";",
+                                  'pipe': "|"}
+    parser: ArgumentParser = ArgumentParser(description="Scrape videogame data from PEGI website")
     parser.add_argument("--delimiter",
                         default="comma",
                         type=str,
@@ -21,19 +23,19 @@ def main():
                         help="Delimiter will be used in csv file. The default is comma.")
     parser.add_argument("path", type=str, help="Path where to save file.")
 
-    args = parser.parse_args()
-    s = requests.Session()
+    args: Namespace = parser.parse_args()
+    s: Session = requests.Session()
     s.headers.update({
         "Referer": "https://pegi.info/",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0"
     })
 
-    url = ("https://pegi.info/search-pegi?q=&filter-age%%5B0%%5D=&filter-descriptor%%5B0%%5D=&filter-publisher="
-           "&filter-platform%%5B0%%5D=&filter-release-year%%5B0%%5D=&page={}")
+    url: str = ("https://pegi.info/search-pegi?q=&filter-age%%5B0%%5D=&filter-descriptor%%5B0%%5D=&filter-publisher="
+                "&filter-platform%%5B0%%5D=&filter-release-year%%5B0%%5D=&page={}")
 
-    first_page_html = get_page_html(s, url, 1)
-    first_page_soup = BeautifulSoup(first_page_html, features="lxml")
-    pages_count = get_pages_count(first_page_soup)
+    first_page_html: str = get_page_html(s, url, 1)
+    first_page_soup: BeautifulSoup = BeautifulSoup(first_page_html, features="lxml")
+    pages_count: int = get_pages_count(first_page_soup)
     pages_range = range(1, pages_count + 1)
 
     with open(args.path, "w", encoding="utf8", newline="", buffering=1) as csvfile:
@@ -74,39 +76,47 @@ def main():
             print("\rParsed {}/{} pages ({:.2}%)".format(page, pages_count, progress_percent), end="")
 
 
-def get_page_html(session, url, page_number):
+def get_page_html(session: Session, url: str, page_number: int) -> str:
+    """
+
+    :rtype: str
+    """
     return session.get(url.format(page_number)).text
 
 
-def get_pages_count(soup):
+def get_pages_count(soup: BeautifulSoup) -> int:
+    """
+
+    :rtype: object
+    """
     results_count = int(soup.find("div", {"class": "results-count"}).find("strong").text.strip("results"))
     pages_count = math.floor(results_count / 10)
     return pages_count
 
 
-def get_filename(path):
+def get_filename(path: str) -> str:
     return os.path.split(path)[1]
 
 
-def get_games_list(soup):
+def get_games_list(soup: BeautifulSoup):
     return soup.find("div", {"class": "page-content"}).find_all("article", {"class": "game"})
 
 
-def get_title(game):
+def get_title(game: Tag) -> str:
     return game.find("div", {"class": "info"}).find("h3").text
 
 
-def get_release_date(game):
+def get_release_date(game: Tag) -> str:
     date = game.find("span", {"class": "release-date"}).text.lstrip("\nRelease Date:")
     day, month, year = date.split("/")
     return str(year + '-' + month + '-' + day)
 
 
-def get_platforms(game):
+def get_platforms(game: Tag):
     return game.find("span", {"class": "platform"}).text.split(":")[1]
 
 
-def get_rating(game):
+def get_rating(game: Tag):
     pegi_ratings = {"pegi3": 3,
                     "pegi7": 7,
                     "pegi12": 12,
@@ -117,7 +127,7 @@ def get_rating(game):
     return pegi_ratings[key]
 
 
-def get_descriptors(game):
+def get_descriptors(game: Tag) -> str:
     pegi_descriptors = {"bad_language": "Bad Language",
                         "discrimination": "Discrimination",
                         "drugs": "Drugs",
@@ -140,11 +150,11 @@ def get_descriptors(game):
     return ", ".join(descriptors_list)
 
 
-def get_publisher(game):
+def get_publisher(game: Tag) -> str:
     return game.find("span", {"class": "publisher"}).text
 
 
-def get_website(game):
+def get_website(game: Tag) -> str:
     url = ""
     website = game.find("div", {"class": "info"}).find("span", {"class": "website-info"})
     if website is not None:
