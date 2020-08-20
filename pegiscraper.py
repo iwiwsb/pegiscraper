@@ -4,7 +4,7 @@ import csv
 import os
 from typing import Dict
 import requests
-from bs4 import BeautifulSoup, Tag
+from bs4 import BeautifulSoup, Tag, ResultSet
 from requests.sessions import Session
 
 
@@ -98,7 +98,7 @@ def get_filename(path: str) -> str:
     return os.path.split(path)[1]
 
 
-def get_games_list(soup: BeautifulSoup):
+def get_games_list(soup: BeautifulSoup) -> ResultSet:
     return soup.find("div", {"class": "page-content"}).find_all("article", {"class": "game"})
 
 
