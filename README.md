@@ -1,6 +1,9 @@
 # PEGI Scraper
 
-PEGI Scraper is the python script that extracts information about videogames from [PEGI](https://pegi.info) website, such as:
+PEGI Scraper is python script that extracts information about videogames from [PEGI](https://pegi.info) website.
+Unfortunately, very slow.
+
+The script parses:
 <ul>
   <li>Game title</li>
   <li>Publisher</li>
@@ -39,17 +42,15 @@ PEGI Scraper is the python script that extracts information about videogames fro
 
 The extracted data is saved to a csv file.
 
-### Example result
+## Example result
 A csv file with following columns and entries:
 
-|game_title|publisher|release_date|platforms |rating|descriptors|website|
-|----------|---------|------------|----------|------|-----------|-------|
-|...|...|...|...|...|...|...|
-|Frostpunk: The Last Autumn|Merge Games|2020-06-11|"PC, PlayStation&nbsp;4, Xbox&nbsp;One"|16|Bad Language|http://www.frostpunkgame.com/|
-|Arcade Archives SUNSETRIDERS|HAMSTER Corporation|2020-06-11|PlayStation&nbsp;4|12|Violence| |
-|Many Faces|Eastasiasoft Limited|2020-06-10|PlayStation&nbsp;4|3| |http://www.eastasiasoft.com|
-|...|...|...|...|...|...|...|
+|game_title|publisher|release_dates_and_platforms |rating|descriptors|website|
+|----------|---------|----------------------------|------|-----------|-------|
+|...|...|...|...|...|...|
+|Stardew Valley|505 Games S.p.A|2018-05-24: PlayStation&nbsp;4|12|Gambling|https://www.stardewvalley.net/|
+|Serious Sam 4|Devolver Digital|2020-08-13: Stadia, 2020-08-13: PC|18|Violence, Bad Language| |
+|Alphaset by POWGI|Lightwood Consultancy Ltd (trading as Lightwood Games)|2020-08-17: PlayStation Vita|3| |//www.lightwoodgames.com
+|...|...|...|...|...|...|
 
-### Speed
-Very slow.
 

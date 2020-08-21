@@ -1,19 +1,17 @@
 from argparse import ArgumentParser, Namespace
-import math
 import csv
-import os
-from typing import Dict
 import requests
-from bs4 import BeautifulSoup, Tag, ResultSet
+from bs4 import BeautifulSoup
+from bs4.element import Tag, ResultSet
 from requests.sessions import Session
 
 
 def main():
-    delimiters: Dict[str, str] = {'comma': ",",
-                                  'tab': "\t",
-                                  'colon': ":",
-                                  'semicolon': ";",
-                                  'pipe': "|"}
+    delimiters = {'comma': ",",
+                  'tab': "\t",
+                  'colon': ":",
+                  'semicolon': ";",
+                  'pipe': "|"}
     parser: ArgumentParser = ArgumentParser(description="Scrape videogame data from PEGI website")
     parser.add_argument("--delimiter",
                         default="comma",
@@ -41,8 +39,7 @@ def main():
     with open(args.path, "w", encoding="utf8", newline="", buffering=1) as csvfile:
         fieldnames = ['"game_title"',
                       '"publisher"',
-                      '"release_date"',
-                      '"platforms"',
+                      '"release_dates_and_platforms"',
                       '"rating"',
                       '"descriptors"',
                       '"website"']
@@ -58,15 +55,13 @@ def main():
             for game in games_list:
                 game_title = get_title(game)
                 publisher = get_publisher(game)
-                release_date = get_release_date(game)
-                platforms = get_platforms(game)
+                release_dates_and_platforms = get_release_dates_and_platforms(game)
                 rating = get_rating(game)
                 descriptors = get_descriptors(game)
                 website = get_website(game)
                 values = [game_title,
                           publisher,
-                          release_date,
-                          platforms,
+                          release_dates_and_platforms,
                           rating,
                           descriptors,
                           website]
@@ -87,44 +82,40 @@ def get_page_html(session: Session, url: str, page_number: int) -> str:
 def get_pages_count(soup: BeautifulSoup) -> int:
     """
 
-    :rtype: object
+    :rtype: int
     """
-    results_count = int(soup.find("div", {"class": "results-count"}).find("strong").text.strip("results"))
-    pages_count = math.floor(results_count / 10)
+    pages_count = int(soup.find("a", {"class": "next"}, text=" >> ")["href"][176:])
     return pages_count
-
-
-def get_filename(path: str) -> str:
-    return os.path.split(path)[1]
 
 
 def get_games_list(soup: BeautifulSoup) -> ResultSet:
     return soup.find("div", {"class": "page-content"}).find_all("article", {"class": "game"})
 
 
+# TODO: Squash 6 functions below into one
 def get_title(game: Tag) -> str:
     return game.find("div", {"class": "info"}).find("h3").text
 
 
-def get_release_date(game: Tag) -> str:
-    date = game.find("span", {"class": "release-date"}).text.lstrip("\nRelease Date:")
-    day, month, year = date.split("/")
-    return str(year + '-' + month + '-' + day)
+def get_release_dates_and_platforms(game: Tag) -> str:
+    release_dates_and_platforms: ResultSet = game.find("span", {"class": "platform"}).ul.find_all("li")
+
+    release_date_platform = []
+    for rdnp in release_dates_and_platforms:
+        rdnp_str: str = rdnp.text
+        day = rdnp_str[:2]
+        month = rdnp_str[3:5]
+        year = rdnp_str[6:10]
+        release_date = "-".join([year, month, day])
+        platform = rdnp_str[13:]
+        release_date_platform.append(release_date + ": " + platform)
+    return ", ".join(release_date_platform)
 
 
-def get_platforms(game: Tag):
-    return game.find("span", {"class": "platform"}).text.split(":")[1]
-
-
-def get_rating(game: Tag):
-    pegi_ratings = {"pegi3": 3,
-                    "pegi7": 7,
-                    "pegi12": 12,
-                    "pegi16": 16,
-                    "pegi18": 18}
+def get_rating(game: Tag) -> str:
     filepath = game.find("div", {"class": "age-rating"}).find("img").get("src")
-    key = get_filename(filepath).rstrip(".png")
-    return pegi_ratings[key]
+    pegi_rating = filepath[65:-4:]
+    return pegi_rating
 
 
 def get_descriptors(game: Tag) -> str:
@@ -142,7 +133,7 @@ def get_descriptors(game: Tag) -> str:
     descriptors = game.find("div", {"class": "descriptors"}).find_all("img")
 
     for descriptor in descriptors:
-        key = get_filename(descriptor.get("src")).split(".")[0]
+        key = descriptor.get("src")[44:-4:]
         if key not in ("", None):
             descriptors_list.append(pegi_descriptors[key])
         else:
