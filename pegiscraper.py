@@ -1,5 +1,6 @@
-from argparse import ArgumentParser, Namespace
+from argparse import ArgumentParser
 import csv
+from typing import List, Dict
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import Tag, ResultSet
@@ -21,19 +22,19 @@ def main():
                         help="Delimiter will be used in csv file. The default is comma.")
     parser.add_argument("path", type=str, help="Path where to save file.")
 
-    args: Namespace = parser.parse_args()
-    s: Session = requests.Session()
+    args = parser.parse_args()
+    s = requests.Session()
     s.headers.update({
         "Referer": "https://pegi.info/",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0"
     })
 
-    url: str = ("https://pegi.info/search-pegi?q=&filter-age%%5B0%%5D=&filter-descriptor%%5B0%%5D=&filter-publisher="
+    url = ("https://pegi.info/search-pegi?q=&filter-age%%5B0%%5D=&filter-descriptor%%5B0%%5D=&filter-publisher="
                 "&filter-platform%%5B0%%5D=&filter-release-year%%5B0%%5D=&page={}")
 
-    first_page_html: str = get_page_html(s, url, 1)
-    first_page_soup: BeautifulSoup = BeautifulSoup(first_page_html, features="lxml")
-    pages_count: int = get_pages_count(first_page_soup)
+    first_page_html = get_page_html(s, url, 1)
+    first_page_soup = BeautifulSoup(first_page_html, features="lxml")
+    pages_count = get_pages_count(first_page_soup)
     pages_range = range(1, pages_count + 1)
 
     with open(args.path, "w", encoding="utf8", newline="", buffering=1) as csvfile:
@@ -53,37 +54,17 @@ def main():
                 soup = BeautifulSoup(search_results, features="lxml")
             games_list = get_games_list(soup)
             for game in games_list:
-                game_title = get_title(game)
-                publisher = get_publisher(game)
-                release_dates_and_platforms = get_release_dates_and_platforms(game)
-                rating = get_rating(game)
-                descriptors = get_descriptors(game)
-                website = get_website(game)
-                values = [game_title,
-                          publisher,
-                          release_dates_and_platforms,
-                          rating,
-                          descriptors,
-                          website]
-                entry = dict(zip(fieldnames, values))
+                entry = construct_game_entry(fieldnames, game)
                 writer.writerow(entry)
             progress_percent = page / pages_count * 100
             print("\rParsed {}/{} pages ({:.2}%)".format(page, pages_count, progress_percent), end="")
 
 
 def get_page_html(session: Session, url: str, page_number: int) -> str:
-    """
-
-    :rtype: str
-    """
     return session.get(url.format(page_number)).text
 
 
 def get_pages_count(soup: BeautifulSoup) -> int:
-    """
-
-    :rtype: int
-    """
     pages_count = int(soup.find("a", {"class": "next"}, text=" >> ")["href"][176:])
     return pages_count
 
@@ -92,7 +73,23 @@ def get_games_list(soup: BeautifulSoup) -> ResultSet:
     return soup.find("div", {"class": "page-content"}).find_all("article", {"class": "game"})
 
 
-# TODO: Squash 6 functions below into one
+def construct_game_entry(fieldnames: List[str], game: Tag) -> Dict[str, str]:
+    game_title = get_title(game)
+    publisher = get_publisher(game)
+    release_dates_and_platforms = get_release_dates_and_platforms(game)
+    rating = get_rating(game)
+    descriptors = get_descriptors(game)
+    website = get_website(game)
+    values = [game_title,
+              publisher,
+              release_dates_and_platforms,
+              rating,
+              descriptors,
+              website]
+    entry = dict(zip(fieldnames, values))
+    return entry
+
+
 def get_title(game: Tag) -> str:
     return game.find("div", {"class": "info"}).find("h3").text
 
