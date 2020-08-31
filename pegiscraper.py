@@ -13,7 +13,7 @@ def main():
                   'colon': ":",
                   'semicolon': ";",
                   'pipe': "|"}
-    parser: ArgumentParser = ArgumentParser(description="Scrape videogame data from PEGI website")
+    parser = ArgumentParser(description="Scrape videogame data from PEGI website")
     parser.add_argument("--delimiter",
                         default="comma",
                         type=str,
