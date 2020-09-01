@@ -95,11 +95,11 @@ def get_title(game: Tag) -> str:
 
 
 def get_release_dates_and_platforms(game: Tag) -> str:
-    release_dates_and_platforms: ResultSet = game.find("span", {"class": "platform"}).ul.find_all("li")
+    release_dates_and_platforms = game.find("span", {"class": "platform"}).ul.find_all("li")
 
     release_date_platform = []
     for rdnp in release_dates_and_platforms:
-        rdnp_str: str = rdnp.text
+        rdnp_str = rdnp.text
         day = rdnp_str[:2]
         month = rdnp_str[3:5]
         year = rdnp_str[6:10]
