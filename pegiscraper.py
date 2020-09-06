@@ -20,13 +20,6 @@ def main():
                         help="Path where to save file.",
                         metavar="PATH",
                         dest="path")
-    parser.add_argument("-f",
-                        default="csv",
-                        type=str,
-                        choices=["csv", "json"],
-                        required=False,
-                        help="Type of file where results saved. Defaults to csv if not provided",
-                        dest="filetype")
     parser.add_argument("-d",
                         default="comma",
                         type=str,
