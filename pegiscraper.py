@@ -14,13 +14,28 @@ def main():
                   'semicolon': ";",
                   'pipe': "|"}
     parser = ArgumentParser(description="Scrape videogame data from PEGI website")
-    parser.add_argument("--delimiter",
+    parser.add_argument("-p",
+                        type=str,
+                        required=True,
+                        help="Path where to save file.",
+                        metavar="PATH",
+                        dest="path")
+    parser.add_argument("-f",
+                        default="csv",
+                        type=str,
+                        choices=["csv", "json"],
+                        required=False,
+                        help="Type of file where results saved. Defaults to csv if not provided",
+                        dest="filetype")
+    parser.add_argument("-d",
                         default="comma",
                         type=str,
                         choices=delimiters.keys(),
                         required=False,
-                        help="Delimiter will be used in csv file. The default is comma.")
-    parser.add_argument("path", type=str, help="Path where to save file.")
+                        help="Delimiter which will be used in csv file. "
+                             "Defaults to comma if not provided. "
+                             "If filetype is json, this parameter is ignored.",
+                        dest="delimiter")
 
     args = parser.parse_args()
     s = requests.Session()
@@ -30,20 +45,20 @@ def main():
     })
 
     url = ("https://pegi.info/search-pegi?q=&filter-age%%5B0%%5D=&filter-descriptor%%5B0%%5D=&filter-publisher="
-                "&filter-platform%%5B0%%5D=&filter-release-year%%5B0%%5D=&page={}")
+           "&filter-platform%%5B0%%5D=&filter-release-year%%5B0%%5D=&page={}")
 
     first_page_html = get_page_html(s, url, 1)
     first_page_soup = BeautifulSoup(first_page_html, features="lxml")
     pages_count = get_pages_count(first_page_soup)
     pages_range = range(1, pages_count + 1)
+    fieldnames = ['"game_title"',
+                  '"publisher"',
+                  '"release_dates_and_platforms"',
+                  '"rating"',
+                  '"descriptors"',
+                  '"website"']
 
     with open(args.path, "w", encoding="utf8", newline="", buffering=1) as csvfile:
-        fieldnames = ['"game_title"',
-                      '"publisher"',
-                      '"release_dates_and_platforms"',
-                      '"rating"',
-                      '"descriptors"',
-                      '"website"']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=delimiters[args.delimiter])
         writer.writeheader()
         for page in pages_range:
