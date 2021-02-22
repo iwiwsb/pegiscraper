@@ -1,6 +1,8 @@
 # PEGI Scraper
 
-PEGI Scraper is python script that extracts information about videogames from [PEGI](https://pegi.info) website.
+:warning::warning::warning:**NO LONGER SUPPORTED/MAINTAINED**:warning::warning::warning:
+
+PEGI Scraper was a python script that extracts information about videogames from [PEGI](https://pegi.info) website.
 Unfortunately, very slow.
 
 The script parses:
